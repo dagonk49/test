@@ -7,6 +7,7 @@ const ArticlePage = () => {
   const { id } = useParams();
   const [article, setArticle] = useState(null);
   const [comments, setComments] = useState([]);
+  const [relatedArticles, setRelatedArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [newComment, setNewComment] = useState('');
@@ -27,6 +28,14 @@ const ArticlePage = () => {
       
       setArticle(articleResponse.data);
       setComments(commentsResponse.data);
+      
+      // Load related articles
+      const relatedResponse = await articlesAPI.getAll({
+        category: articleResponse.data.category,
+        limit: 4
+      });
+      setRelatedArticles(relatedResponse.data.articles.filter(a => a.id !== id));
+      
       setError(null);
     } catch (err) {
       setError('Erreur lors du chargement de l\'article');
@@ -35,14 +44,78 @@ const ArticlePage = () => {
       setLoading(false);
     }
   };
-  
-  if (!article) {
+
+  const handleSubmitComment = async (e) => {
+    e.preventDefault();
+    if (!newComment.trim() || !userName.trim() || submittingComment) return;
+
+    try {
+      setSubmittingComment(true);
+      await commentsAPI.create(id, {
+        author: userName.trim(),
+        content: newComment.trim()
+      });
+      
+      // Reload comments
+      const commentsResponse = await commentsAPI.getByArticle(id);
+      setComments(commentsResponse.data);
+      
+      // Clear form
+      setNewComment('');
+      setUserName('');
+    } catch (err) {
+      console.error('Error submitting comment:', err);
+      alert('Erreur lors de l\'ajout du commentaire');
+    } finally {
+      setSubmittingComment(false);
+    }
+  };
+
+  const handleLikeArticle = async () => {
+    try {
+      const response = await articlesAPI.like(id);
+      setArticle(prev => ({ ...prev, likes: response.data.likes }));
+    } catch (err) {
+      console.error('Error liking article:', err);
+    }
+  };
+
+  const handleLikeComment = async (commentId) => {
+    try {
+      const response = await commentsAPI.like(commentId);
+      setComments(prev => 
+        prev.map(comment => 
+          comment.id === commentId 
+            ? { ...comment, likes: response.data.likes }
+            : comment
+        )
+      );
+    } catch (err) {
+      console.error('Error liking comment:', err);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="dark-container">
+        <div className="dark-content-container">
+          <div style={{ textAlign: 'center', padding: '100px 0' }}>
+            <div className="heading-2" style={{ color: 'var(--text-muted)' }}>
+              Chargement de l'article...
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !article) {
     return (
       <div className="dark-container">
         <div className="dark-content-container">
           <div style={{ textAlign: 'center', padding: '100px 0' }}>
             <h1 className="display-medium" style={{ marginBottom: '20px' }}>
-              Article non trouvé
+              {error || 'Article non trouvé'}
             </h1>
             <Link to="/blog" className="btn-primary">
               <ArrowLeft size={18} />
