@@ -1,15 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Calendar, Clock, Heart, MessageCircle, User, Send, Tag } from 'lucide-react';
-import { mockArticles, mockComments } from '../mock/data';
+import { articlesAPI, commentsAPI } from '../services/api';
 
 const ArticlePage = () => {
   const { id } = useParams();
+  const [article, setArticle] = useState(null);
+  const [comments, setComments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [newComment, setNewComment] = useState('');
   const [userName, setUserName] = useState('');
-  
-  const article = mockArticles.find(a => a.id === parseInt(id));
-  const comments = mockComments[parseInt(id)] || [];
+  const [submittingComment, setSubmittingComment] = useState(false);
+
+  useEffect(() => {
+    loadArticleAndComments();
+  }, [id]);
+
+  const loadArticleAndComments = async () => {
+    try {
+      setLoading(true);
+      const [articleResponse, commentsResponse] = await Promise.all([
+        articlesAPI.getById(id),
+        commentsAPI.getByArticle(id)
+      ]);
+      
+      setArticle(articleResponse.data);
+      setComments(commentsResponse.data);
+      setError(null);
+    } catch (err) {
+      setError('Erreur lors du chargement de l\'article');
+      console.error('Error loading article:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
   
   if (!article) {
     return (
