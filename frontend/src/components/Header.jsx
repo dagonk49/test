@@ -44,6 +44,19 @@ const Header = () => {
             Accueil
           </Link>
           <Link 
+            to="/formations" 
+            className={`dark-nav-link ${isActive('/formations') ? 'active' : ''}`}
+            style={{ 
+              color: isActive('/formations') ? 'var(--brand-primary)' : 'var(--text-muted)',
+              textDecoration: 'none',
+              fontSize: '18px',
+              fontWeight: '400',
+              transition: 'color 0.3s ease'
+            }}
+          >
+            Formations
+          </Link>
+          <Link 
             to="/blog" 
             className={`dark-nav-link ${isActive('/blog') ? 'active' : ''}`}
             style={{ 
@@ -101,6 +114,15 @@ const Header = () => {
               borderBottom: '1px solid var(--border-subtle)'
             }}>
               Accueil
+            </Link>
+            <Link to="/formations" className="mobile-nav-link" style={{ 
+              display: 'block', 
+              padding: '12px 0', 
+              color: 'var(--text-primary)',
+              textDecoration: 'none',
+              borderBottom: '1px solid var(--border-subtle)'
+            }}>
+              Formations
             </Link>
             <Link to="/blog" className="mobile-nav-link" style={{ 
               display: 'block', 
