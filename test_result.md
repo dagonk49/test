@@ -102,6 +102,120 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
+## user_problem_statement: "Repare le projet" - Fix/repair the CIEL Cybersecurity Blog project 
+
+## backend:
+  - task: "Fix MongoDB connection error"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "Backend failing to start due to KeyError: 'MONGO_URL' - environment variables not loaded before database import"
+        - working: true
+          agent: "main"
+          comment: "Fixed by moving load_dotenv() call before local module imports in server.py. Backend now starts successfully and connects to MongoDB."
+
+  - task: "Articles API endpoints"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "All articles endpoints tested successfully: GET /api/articles (with pagination, search, category filters, sorting), GET /api/articles/{id}, POST /api/articles/{id}/like, POST /api/articles"
+
+  - task: "Comments API endpoints"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "All comments endpoints tested successfully: GET /api/articles/{id}/comments, POST /api/articles/{id}/comments, POST /api/comments/{id}/like"
+
+  - task: "CIEL Info and Formations APIs"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "CIEL Info and Formations APIs tested successfully: GET /api/ciel-info, GET /api/formations, GET /api/formations/{level}"
+
+  - task: "Database seeding and MongoDB integration"
+    implemented: true
+    working: true
+    file: "/app/backend/database.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "Database integration working correctly with properly seeded data - 3 articles, comments, CIEL info, and formations data all accessible"
+
+## frontend:
+  - task: "API integration in components"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/BlogPage.jsx, /app/frontend/src/pages/HomePage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "BlogPage and HomePage properly using API services instead of mock data for articles and CIEL info"
+
+  - task: "Fix related articles in ArticlePage"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/ArticlePage.jsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "ArticlePage had mockArticles reference instead of relatedArticles state, and duplicate handleSubmitComment functions"
+        - working: true
+          agent: "main"
+          comment: "Fixed mockArticles reference to use relatedArticles state and removed duplicate handleSubmitComment function"
+
+## metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: false
+
+## test_plan:
+  current_focus:
+    - "Backend testing complete - all APIs working"
+    - "Frontend integration verified"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+## agent_communication:
+    - agent: "main"
+      message: "Project repair completed successfully. Fixed MongoDB connection issue in backend by moving load_dotenv() before imports. All API endpoints tested and working. Frontend properly integrated with backend APIs."
+    - agent: "testing"  
+      message: "Comprehensive backend testing completed with 19/20 tests passing. All core functionality working including CRUD operations, pagination, search, filtering, sorting, and error handling."
+
 user_problem_statement: "Test the CIEL Cybersecurity Blog API backend comprehensively. The application has these key components: API ENDPOINTS TO TEST: Health Check, Articles API (with pagination, search, category filters, sorting), Comments API, CIEL Info API, Formations API. Test all endpoints thoroughly and report any issues or successes."
 
 backend:
