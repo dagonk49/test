@@ -137,17 +137,6 @@ const ArticlePage = () => {
     });
   };
 
-  const handleSubmitComment = (e) => {
-    e.preventDefault();
-    if (newComment.trim() && userName.trim()) {
-      // In a real app, this would make an API call
-      console.log('Nouveau commentaire:', { userName, content: newComment });
-      setNewComment('');
-      setUserName('');
-      alert('Commentaire ajouté ! (simulé)');
-    }
-  };
-
   // Parse article content for basic markdown-like formatting
   const formatContent = (content) => {
     return content.split('\n').map((paragraph, index) => {
