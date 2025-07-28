@@ -9,6 +9,10 @@ from typing import Optional, List
 import uuid
 from datetime import datetime
 
+# Load environment variables BEFORE importing local modules
+ROOT_DIR = Path(__file__).parent
+load_dotenv(ROOT_DIR / '.env')
+
 from models import (
     Article, ArticleCreate, ArticlesResponse,
     Comment, CommentCreate,
@@ -19,9 +23,6 @@ from database import (
     ciel_info_collection, formations_collection,
     seed_database
 )
-
-ROOT_DIR = Path(__file__).parent
-load_dotenv(ROOT_DIR / '.env')
 
 # Create the main app without a prefix
 app = FastAPI(title="CIEL Cybersecurity Blog API")
