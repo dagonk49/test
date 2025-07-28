@@ -488,7 +488,7 @@ const ArticlePage = () => {
               </h3>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                {mockArticles.filter(a => a.id !== article.id && a.category === article.category).slice(0, 3).map(relatedArticle => (
+                {relatedArticles.slice(0, 3).map(relatedArticle => (
                   <Link
                     key={relatedArticle.id}
                     to={`/article/${relatedArticle.id}`}
@@ -509,7 +509,7 @@ const ArticlePage = () => {
                       {relatedArticle.title}
                     </h4>
                     <p className="body-small" style={{ color: 'var(--text-muted)' }}>
-                      {relatedArticle.readTime} • {relatedArticle.author}
+                      {relatedArticle.read_time} • {relatedArticle.author}
                     </p>
                   </Link>
                 ))}
