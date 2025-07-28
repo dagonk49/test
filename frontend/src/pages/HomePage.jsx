@@ -1,11 +1,88 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Spline from '@splinetool/react-spline';
 import { Shield, Users, Award, Building, ChevronRight, Lock, Network, Code, Zap } from 'lucide-react';
-import { mockCielInfo } from '../mock/data';
+import { cielAPI } from '../services/api';
 import { Link } from 'react-router-dom';
 
 const HomePage = () => {
-  const { specializations, stats } = mockCielInfo;
+  const [cielInfo, setCielInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    loadCielInfo();
+  }, []);
+
+  const loadCielInfo = async () => {
+    try {
+      setLoading(true);
+      const response = await cielAPI.getInfo();
+      setCielInfo(response.data);
+      setError(null);
+    } catch (err) {
+      setError('Erreur lors du chargement des informations');
+      console.error('Error loading CIEL info:', err);
+      // Fallback data in case of error
+      setCielInfo({
+        specializations: [
+          {
+            title: "Cybersécurité",
+            description: "Protection des systèmes d'information, analyse des menaces, audit de sécurité"
+          },
+          {
+            title: "Réseaux & Télécommunications",
+            description: "Architecture réseau, administration système, infrastructures télécoms"
+          },
+          {
+            title: "Développement Sécurisé",
+            description: "Programmation sécurisée, tests de pénétration, développement d'outils"
+          },
+          {
+            title: "Électronique Numérique",
+            description: "Systèmes embarqués, IoT sécurisé, analyse de firmware"
+          }
+        ],
+        stats: {
+          students: 450,
+          graduates: 1200,
+          certifications: 15,
+          partners: 85
+        }
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="dark-container">
+        <div className="dark-content-container">
+          <div style={{ textAlign: 'center', padding: '100px 0' }}>
+            <div className="heading-2" style={{ color: 'var(--text-muted)' }}>
+              Chargement...
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!cielInfo) {
+    return (
+      <div className="dark-container">
+        <div className="dark-content-container">
+          <div style={{ textAlign: 'center', padding: '100px 0' }}>
+            <div className="heading-2" style={{ color: 'var(--text-muted)' }}>
+              Erreur de chargement
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const { specializations, stats } = cielInfo;
 
   return (
     <div className="dark-container">
@@ -66,10 +143,10 @@ const HomePage = () => {
                   <Code size={18} />
                   Découvrir le Blog
                 </Link>
-                <button className="btn-secondary">
+                <Link to="/formations" className="btn-secondary">
                   <Users size={18} />
                   Nos Formations
-                </button>
+                </Link>
               </div>
 
               {/* Stats */}
